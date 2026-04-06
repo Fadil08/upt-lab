@@ -56,7 +56,8 @@ sudo apt install curl wget unzip git nano vim ufw
 
 ### 4. PHP & Ekstensi
 ```bash
-sudo apt install php php-cli php-mysql php-gd php-mbstring php-gettext php-xml php-curl php-zip php-bcmath php-intl
+sudo apt install php8.1 php8.1-cli php8.1-mysql php8.1-gd php8.1-mbstring php8.
+1-gettext php8.1-xml php8.1-curl php8.1-zip php8.1-bcmath php8.1-intl
 ```
 - **php/php-cli**: Core PHP untuk run aplikasi web dan command line.
 - **php-mysql**: Koneksi ke database MySQL.
