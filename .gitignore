@@ -47,7 +47,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-/vendor/
 composer.lock
 config/database.php
 config/captcha.php
