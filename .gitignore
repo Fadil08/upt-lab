@@ -9,7 +9,7 @@ images/default/webicon.*
 files/*
 !files/membercard/*
 repository/*
-config/*
+# config/*
 cache/*
 .DS_Store
 ._.*
@@ -26,7 +26,7 @@ slims8_akasia.sublime-workspace
 plugins/*
 !plugins/read_counter/
 
-template/*
+# template/*
 
 # Windows image file caches
 Thumbs.db
@@ -48,11 +48,11 @@ $RECYCLE.BIN/
 *.lnk
 
 composer.lock
-config/database.php
-config/captcha.php
-config/env.php
-config/csp.php
-config/auth.php
+# config/database.php
+# config/captcha.php
+# config/env.php
+# config/csp.php
+# config/auth.php
 tarsius
 
 .env
