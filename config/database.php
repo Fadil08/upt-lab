@@ -25,11 +25,11 @@ return [
      */
     'nodes' => [
         'SLiMS' => [
-            'host' => 'localhost',
-            'database' => 'uptLab',
+            'host' => '103.92.209.102',
+            'database' => 'uptlab',
             'port' => 3306,
-            'username' => 'root',
-            'password' => '123',
+            'username' => 'uptlab',
+            'password' => 'untag45',
             'options' => [
                 'storage_engine' => 'MyISAM'
             ]

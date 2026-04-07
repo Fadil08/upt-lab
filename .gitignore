@@ -6,8 +6,8 @@ images/cache/*
 images/content/*
 images/default/logo.*
 images/default/webicon.*
-files/*
-!files/membercard/*
+# files/*
+# !files/membercard/*
 repository/*
 # config/*
 cache/*
