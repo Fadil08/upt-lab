@@ -1292,14 +1292,14 @@ if (isset($_GET['action']) && $_GET['action'] == 'history') {
             $datagrid->setSQLColumn('index.biblio_id', 'index.title AS \'' . __('Title') . '\'', 'index.labels', 'index.image',
                 'index.author',
                 //'index.isbn_issn AS \'' . __('ISBN/ISSN') . '\'',
-				'mst_location.location_name AS \'' . __('Lokasi') . '\'', // script tambahan
+				'GROUP_CONCAT(DISTINCT mst_location.location_name ORDER BY mst_location.location_name SEPARATOR \', \') AS \'' . __('Lokasi') . '\'', // script tambahan
                 'IF(COUNT(item.item_id)>0, COUNT(item.item_id), \'<strong style="color: #f00;">' . __('None') . '</strong>\') AS \'' . __('Copies') . '\'',
                 'index.last_update AS \'' . __('Last Update') . '\'');
             $datagrid->modifyColumnContent(1, 'callback{showTitleAuthors}');
         } else {
             $datagrid->setSQLColumn('index.title AS \'' . __('Title') . '\'', 'index.author', 'index.labels', 'index.image',
                 //'index.isbn_issn AS \'' . __('ISBN/ISSN') . '\'',
-				'mst_location.location_name AS \'' . __('Lokasi') . '\'', // script tambahan
+				'GROUP_CONCAT(DISTINCT mst_location.location_name ORDER BY mst_location.location_name SEPARATOR \', \') AS \'' . __('Lokasi') . '\'', // script tambahan
                 'IF(COUNT(item.item_id)>0, COUNT(item.item_id), \'<strong style="color: #f00;">' . __('None') . '</strong>\') AS \'' . __('Copies') . '\'',
                 'index.last_update AS \'' . __('Last Update') . '\'');
             $datagrid->modifyColumnContent(1, 'callback{showTitleAuthors}');
@@ -1323,14 +1323,14 @@ if (isset($_GET['action']) && $_GET['action'] == 'history') {
             $datagrid->setSQLColumn('biblio.biblio_id', 'biblio.biblio_id AS bid',
                 'biblio.title AS \'' . __('Title') . '\'',
                 //'biblio.isbn_issn AS \'' . __('ISBN/ISSN') . '\'',
-				'mst_location.location_name AS \'' . __('Lokasi') . '\'', // script tambahan
+				'GROUP_CONCAT(DISTINCT mst_location.location_name ORDER BY mst_location.location_name SEPARATOR \', \') AS \'' . __('Lokasi') . '\'', // script tambahan
                 'IF(COUNT(item.item_id)>0, COUNT(item.item_id), \'<strong style="color: #f00;">' . __('None') . '</strong>\') AS \'' . __('Copies') . '\'',
                 'biblio.last_update AS \'' . __('Last Update') . '\'');
             $datagrid->modifyColumnContent(2, 'callback{showTitleAuthors}');
         } else {
             $datagrid->setSQLColumn('biblio.biblio_id AS bid', 'biblio.title AS \'' . __('Title') . '\'',
                 //'biblio.isbn_issn AS \'' . __('ISBN/ISSN') . '\'',
-				'mst_location.location_name AS \'' . __('Lokasi') . '\'', // script tambahan
+				'GROUP_CONCAT(DISTINCT mst_location.location_name ORDER BY mst_location.location_name SEPARATOR \', \') AS \'' . __('Lokasi') . '\'', // script tambahan
                 'IF(COUNT(item.item_id)>0, COUNT(item.item_id), \'<strong style="color: #f00;">' . __('None') . '</strong>\') AS \'' . __('Copies') . '\'',
                 'biblio.last_update AS \'' . __('Last Update') . '\'');
             // modify column value
@@ -1384,7 +1384,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'history') {
     $datagrid->table_header_attr = 'class="dataListHeader" style="font-weight: bold;"';
     // set delete proccess URL
     $datagrid->chbox_form_URL = $_SERVER['PHP_SELF'];
-    $datagrid->debug = true;
+    $datagrid->debug = false;
 
     // execute registered hook
     Plugins::run(Plugins::BIBLIOGRAPHY_BEFORE_DATAGRID_OUTPUT);

@@ -148,11 +148,17 @@ function showTitleAuthors($obj_db, $array_data)
       }
 
       $_authors = substr_replace($_authors, '', -3);
+      $_img_src = '';
       if($_image!='' AND $imageDisk->isExists('docs/'.$_image)){
-        $img = 'images/docs/'.urlencode($_image);  
+        $_img_src = '../lib/minigalnano/createthumb.php?filename=images/docs/'.urlencode($_image).'&width=50&height=65';
+      } elseif($_image != '') {
+        // Fallback: file tidak ada lokal, ambil dari server remote
+        $_img_src = 'http://localhost/U3/images/docs/'.urlencode($_image);
+      } else {
+        $_img_src = '../lib/minigalnano/createthumb.php?filename=images/default/image.png&width=50&height=65';
       }
       $_output = '<div class="media">
-                    <img class="mr-3 rounded" loading="lazy" src="../lib/minigalnano/createthumb.php?filename='.$img.'&width=50&height=65" alt="cover image">
+                    <img class="mr-3 rounded" loading="lazy" src="'.$_img_src.'" style="width:50px;height:65px;object-fit:cover;" alt="cover image">
                     <div class="media-body">
                       <div class="title">'.stripslashes($_title).'</div>
                       <div class="authors">'.$_authors.'</div>
@@ -193,10 +199,15 @@ function showTitleAuthors($obj_db, $array_data)
       }
 
       if($array_data[3]!='' AND $imageDisk->isExists('docs/'.$array_data[3])){
-        $img = 'images/docs/'.urlencode($array_data[3]);  
+        $_img_src = '../lib/minigalnano/createthumb.php?filename=images/docs/'.urlencode($array_data[3]).'&width=50&height=65';
+      } elseif($array_data[3] != '') {
+        // Fallback: file tidak ada lokal, ambil dari server remote
+        $_img_src = 'http://localhost/U3/images/docs/'.urlencode($array_data[3]);
+      } else {
+        $_img_src = '../lib/minigalnano/createthumb.php?filename=images/default/image.png&width=50&height=65';
       }
       $_output = '<div class="media">
-                    <img class="mr-3 rounded" loading="lazy" src="../lib/minigalnano/createthumb.php?filename='.$img.'&width=50&height=65" alt="cover image">
+                    <img class="mr-3 rounded" loading="lazy" src="'.$_img_src.'" style="width:50px;height:65px;object-fit:cover;" alt="cover image">
                     <div class="media-body">
                       <div class="title">'.stripslashes($array_data[1]).'</div>
                       <div class="authors">'.$array_data[4].'</div>
@@ -208,7 +219,8 @@ function showTitleAuthors($obj_db, $array_data)
                         <span>' . trim(str_replace(['Server','server'], '', $_p2p_server_type)) . ' - ' . ($server_source??'') . '</span>
                       </div>
                     </div>
-                  </div>';
+                  </div>'
+      ;
       $_labels = $array_data[2];
   }
   // check for opac hide flag
