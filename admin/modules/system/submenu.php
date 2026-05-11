@@ -26,8 +26,8 @@ do_checkIP('smc-system');
 global $sysconf;
 
 $menu['system.header-configuration'] = array('Header', __('CONFIGURATION'));
-// only administrator have privileges for below menus
-if ($_SESSION['uid'] == 1) {
+// administrator or users with system privilege can access below menus
+if ($_SESSION['uid'] == 1 || utility::havePrivilege('system', 'r')) {
     $menu['system.system-configuration'] = array(__('System Configuration'), MWB.'system/index.php', __('Configure Global System Preferences'));
     $menu['system.system-environment'] = array(__('System Environment'), MWB.'system/envinfo.php', __('Information about System Environment'));
     $menu['system.system-environment-setting'] = array(__('System Environment Setting'), MWB.'system/envsetting.php', __('Configure System Environment Mode'));
@@ -40,8 +40,8 @@ if ($_SESSION['uid'] == 1) {
     $menu['system.captcha-setting'] = array(__('Captcha Setting'), MWB.'system/captchasetting.php', __('Configure Captcha'));
 }
 $menu['system.content'] = array(__('Content'), MWB.'system/content.php', __('Content'));
-// only administrator have privileges for below menus
-if ($_SESSION['uid'] == 1) {
+// administrator or users with system privilege can access below menus
+if ($_SESSION['uid'] == 1 || utility::havePrivilege('system', 'r')) {
     if ($sysconf['index']['engine']['enable']) {
       $menu['system.biblio-indexes'] = array(__('Biblio Indexes'), MWB.'system/biblio_indexes_'.$sysconf['index']['engine']['type'].'.php', __('Bibliographic Indexes management'));
     } else {

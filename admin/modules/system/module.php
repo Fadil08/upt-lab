@@ -36,8 +36,8 @@ do_checkIP('smc-system');
 require SB.'admin/default/session.inc.php';
 require SB.'admin/default/session_check.inc.php';
 
-// only administrator have privileges to modify modules data
-if ($_SESSION['uid'] != 1) {
+// only administrator or users with system privilege have privileges to modify modules data
+if ($_SESSION['uid'] != 1 && !utility::havePrivilege('system', 'r')) {
     die('<div class="errorBox">'.__('You don\'t have enough privileges to view this section').'</div>');
 }
 

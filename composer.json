@@ -16,7 +16,8 @@
         "ifsnop/mysqldump-php": "^2.9",
         "symfony/finder": "^6.4",
         "symfony/console": "^6.4",
-        "symfony/var-dumper": "^6.4"
+        "symfony/var-dumper": "^6.4",
+        "picqer/php-barcode-generator": "^2.4"
     },
     "license": "GNU GPL v3",
     "require-dev": {

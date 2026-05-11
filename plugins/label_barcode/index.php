@@ -32,22 +32,23 @@ if (!$can_read) {
 
 $max_print = 50;
 
-// for generate barcode && force use zend barcode
-ini_set('include_path', LIB);
-require_once LIB . 'Zend/Barcode.php';
+// Load composer autoloader for picqer/php-barcode-generator
+$autoload_path = __DIR__ . '/../../vendor/autoload.php';
+if (file_exists($autoload_path)) {
+    require_once $autoload_path;
+}
 
 function generateBarcode($code)
 {
     $file_name = __DIR__ . '/../../images/barcodes/' . $code . '.png';
-    $renderer = Zend_Barcode:: factory(
-        'code128', 'image', [
-            'text' => urldecode($code),
-            'factor' => 2,
-            'font' => realpath(LIB . 'phpbarcode/DejaVuSans.ttf'),
-            'fontSize' => 8,
-        ]
+    $generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+    $barcode_data = $generator->getBarcode(
+        $code,
+        \Picqer\Barcode\BarcodeGenerator::TYPE_CODE_128,
+        2,
+        50
     );
-    call_user_func('imagepng', $renderer->draw(), $file_name);
+    file_put_contents($file_name, $barcode_data);
 }
 
 /* RECORD OPERATION */

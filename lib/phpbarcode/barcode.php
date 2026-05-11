@@ -1,45 +1,15 @@
 <?php
-/*
-
- * Image-Creator / Sample
- * Part of PHP-Barcode 0.3pl1
-
- * (C) 2001,2002,2003,2004 by Folke Ashberg <folke@ashberg.de>
-
- * The newest version can be found at http://www.ashberg.de/bar
-
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
- */
-
-/*
- * call
- * http://localhost/barcode.php?code=012345678901
- *   or
- * http://localhost/barcode.php?code=012345678901&encoding=EAN&scale=4&mode=png
- *
- */
-
-/*
- * Security Patch by Indra Sutriadi (http://sutriadi.web.id)
-*/
 
 define('INDEX_AUTH', '1');
 
 if (!defined('SB')) {
-  require '../../sysconfig.inc.php';
+  require __DIR__ . '/../../sysconfig.inc.php';
+}
+
+// Load composer autoloader for picqer/php-barcode-generator
+$autoload_path = __DIR__ . '/../../vendor/autoload.php';
+if (file_exists($autoload_path)) {
+    require_once $autoload_path;
 }
 
 function scinfo()
@@ -111,59 +81,84 @@ function checkref($mode = 'module') {
     return;
 }
 
-// checkref('admin');
 $get = (object)$_GET;
 $allowed_scale = array(1, 2, 3, 4, 5, 6);
 if ( ! isset($get->scale) OR (isset($get->scale) AND ! in_array($get->scale, $allowed_scale)))
 	$get->scale = 2;
 
-// http vars
-$code = isset($get->code) ? urlencode(trim($get->code)) : '1234567890';
-
-$code=stripslashes($code);
+$code = isset($get->code) ? trim($get->code) : '1234567890';
+$code = stripslashes($code);
+$code_raw = $code;
+$code = urlencode($code);
 
 $encoding = isset($get->encoding) ? trim($get->encoding) : 'code128';
 $scale = isset($get->scale) ? trim($get->scale) : '2';
 $mode = isset($get->mode) ? trim($get->mode) : 'png';
 
-// output the barcode
+// Encoding mapping from SLiMS encoding names to picqer/php-barcode-generator types
+$encoding_map = [
+    'code128' => \Picqer\Barcode\BarcodeGenerator::TYPE_CODE_128,
+    'code39' => \Picqer\Barcode\BarcodeGenerator::TYPE_CODE_39,
+    'code25' => \Picqer\Barcode\BarcodeGenerator::TYPE_STANDARD_2_5,
+    'code25interleaved' => \Picqer\Barcode\BarcodeGenerator::TYPE_INTERLEAVED_2_5,
+    'codabar' => \Picqer\Barcode\BarcodeGenerator::TYPE_CODABAR,
+    'code93' => \Picqer\Barcode\BarcodeGenerator::TYPE_CODE_93,
+    'ean2' => \Picqer\Barcode\BarcodeGenerator::TYPE_EAN_2,
+    'ean5' => \Picqer\Barcode\BarcodeGenerator::TYPE_EAN_5,
+    'ean8' => \Picqer\Barcode\BarcodeGenerator::TYPE_EAN_8,
+    'ean13' => \Picqer\Barcode\BarcodeGenerator::TYPE_EAN_13,
+    'upca' => \Picqer\Barcode\BarcodeGenerator::TYPE_UPC_A,
+    'upce' => \Picqer\Barcode\BarcodeGenerator::TYPE_UPC_E,
+    'itf14' => \Picqer\Barcode\BarcodeGenerator::TYPE_ITF_14,
+    'postnet' => \Picqer\Barcode\BarcodeGenerator::TYPE_POSTNET,
+    'planet' => \Picqer\Barcode\BarcodeGenerator::TYPE_PLANET,
+];
+
+// Try Zend_Barcode engine if enabled
 if ($sysconf['zend_barcode_engine'] === true) {
-  // include Zend_Barcode library
-  ini_set('include_path', LIB);
-  require_once LIB . 'Zend/Barcode.php';
-  
-  $act = isset($get->act) ? trim($get->act) : 'save';
-  $output = isset($get->output) ? trim($get->output) : 'image';
-  $ext = $output == 'image' ? $mode : 'pdf';
-  
-  $file_name = '../../images/barcodes/' . $code . '.' . $ext;
-  
-  $options = array('text' => urldecode($code));
-  //$options['barHeight'] = 50;
-  //$options['barThickWidth'] = 3;
-  //$options['barThinWidth'] = 1;
-  $options['factor'] = $scale;
-  //$options['foreColor'] = "#000000";
-  //$options['backgroundColor'] = "#FFFFFF";
-  //$options['reverseColor'] = FALSE;
-  // $options['orientation'] = 0;
-  $options['font'] = realpath('./DejaVuSans.ttf');
-  $options['fontSize'] = 8;
-  // $options['withBorder'] = TRUE;
-  // $options['withQuietZones'] = TRUE;
-  //$options['drawText'] = TRUE;
-  //$options['stretchText'] = FALSE;
-  //$options['withChecksum'] = FALSE;
-  //$options['withChecksumInText'] = FALSE;
-  
-  // output the barcode
-  $renderer = Zend_Barcode:: factory(
-      $encoding, $output, $options, array()
-  );
-  if ($act == 'save') {
-    call_user_func('image'.$mode, $renderer->draw(), $file_name);
-  } else {
-    $renderer->render();
+  $zend_file = LIB . 'Zend/Barcode.php';
+  if (file_exists($zend_file)) {
+    ini_set('include_path', LIB);
+    require_once $zend_file;
+    
+    $act = isset($get->act) ? trim($get->act) : 'save';
+    $output = isset($get->output) ? trim($get->output) : 'image';
+    $ext = $output == 'image' ? $mode : 'pdf';
+    
+    $file_name = __DIR__ . '/../../images/barcodes/' . $code . '.' . $ext;
+    
+    $options = array('text' => $code_raw);
+    $options['factor'] = $scale;
+    $options['font'] = realpath(__DIR__ . '/DejaVuSans.ttf');
+    $options['fontSize'] = 8;
+    
+    $renderer = Zend_Barcode:: factory(
+        $encoding, $output, $options, array()
+    );
+    if ($act == 'save') {
+      call_user_func('image'.$mode, $renderer->draw(), $file_name);
+    } else {
+      $renderer->render();
+    }
+    exit;
   }
 }
+
+// Fallback: use picqer/php-barcode-generator
+$picqer_type = isset($encoding_map[$encoding])
+    ? $encoding_map[$encoding]
+    : \Picqer\Barcode\BarcodeGenerator::TYPE_CODE_128;
+
+$generator = new \Picqer\Barcode\BarcodeGeneratorPNG();
+$height = (int)$scale * 25;
+$widthFactor = (int)$scale;
+if ($widthFactor < 1) $widthFactor = 2;
+
+$barcode_data = $generator->getBarcode($code_raw, $picqer_type, $widthFactor, $height);
+
+$file_name = __DIR__ . '/../../images/barcodes/' . $code . '.png';
+file_put_contents($file_name, $barcode_data);
+
+header('Content-Type: image/png');
+echo $barcode_data;
 exit;

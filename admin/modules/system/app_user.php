@@ -58,8 +58,8 @@ if (isset($_GET['changecurrent'])) {
 }
 
 if (!$changecurrent) {
-    // only administrator have privileges add/edit users
-    if ($_SESSION['uid'] != 1) {
+    // only administrator or users with system privilege have privileges to add/edit users
+    if ($_SESSION['uid'] != 1 && !utility::havePrivilege('system', 'r')) {
         die('<div class="errorBox">'.__('You don\'t have enough privileges to view this section').'</div>');
     }
 }
@@ -537,8 +537,8 @@ if (isset($_POST['detail']) OR (isset($_GET['action']) AND $_GET['action'] == 'd
     }
 
 } else {
-    // only administrator have privileges to view user list
-    if (!($can_read AND $can_write) OR $_SESSION['uid'] != 1) {
+    // only administrator or users with system privilege have privileges to view user list
+    if (!($can_read AND $can_write) OR ($_SESSION['uid'] != 1 && !utility::havePrivilege('system', 'r'))) {
         die('<div class="errorBox">'.__('You don\'t have enough privileges to view this section').'</div>');
     }
 

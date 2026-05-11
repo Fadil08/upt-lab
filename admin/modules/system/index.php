@@ -46,8 +46,8 @@ require LIB.'ip_based_access.inc.php';
 do_checkIP('smc');
 do_checkIP('smc-system');
 
-// only administrator have privileges to change global settings
-if ($_SESSION['uid'] != 1) {
+// only administrator or users with system read privilege can access this module
+if ($_SESSION['uid'] != 1 && !utility::havePrivilege('system', 'r')) {
     header('Location: '.MWB.'system/content.php');
     die();
 }
